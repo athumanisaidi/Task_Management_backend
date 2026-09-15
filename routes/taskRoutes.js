@@ -6,9 +6,10 @@ const pool = require("../config/db");
 const verifyToken = require("../middleware/authMiddleware");
 const { body } = require("express-validator");
 const validate = require("../middleware/validationMiddleware");
+const authorizePermission = require("../middleware/permissionMiddleware");
 
 // GET all tasks
-router.get("/", verifyToken, async (req, res) => {
+router.get("/", verifyToken,authorizePermission("View Tasks"),  async (req, res) => {
     try {
         const result = await pool.query(
             "SELECT * FROM tasks ORDER BY task_id"
@@ -21,7 +22,7 @@ router.get("/", verifyToken, async (req, res) => {
 });
 
 // GET task by ID
-router.get("/:id", verifyToken, async (req, res) => {
+router.get("/:id", verifyToken, authorizePermission("View Tasks"), async (req, res) => {
     try {
         const result = await pool.query(
             "SELECT * FROM tasks WHERE task_id = $1",
@@ -44,6 +45,7 @@ router.get("/:id", verifyToken, async (req, res) => {
 router.post(
     "/",
     verifyToken,
+    authorizePermission("Create Task"),
     [
         body("title")
             .notEmpty()
@@ -125,7 +127,7 @@ router.post(
 // PUT - update task
 router.put(
     "/:id",
-    verifyToken,
+    verifyToken, authorizePermission("Update Task"),
     [
         body("title")
             .notEmpty()
@@ -219,7 +221,7 @@ router.put(
 });
 
 // DELETE task
-router.delete("/:id", verifyToken, async (req, res) => {
+router.delete("/:id", verifyToken, authorizePermission("Delete Task"), async (req, res) => {
     try {
         const result = await pool.query(
             "DELETE FROM tasks WHERE task_id = $1 RETURNING *",

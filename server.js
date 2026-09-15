@@ -33,6 +33,11 @@ app.use("/api/performance-reports", performanceReportRoutes);
 const authRoutes = require("./routes/auth");
 app.use("/api/auth",authRoutes);
 
+const userPermissionRoutes = require("./routes/userPermissionRoutes");
+app.use("/api/userpermissions", userPermissionRoutes);
+
+const configurationRoutes = require("./routes/configurationRoutes");
+app.use("/api/configurations", configurationRoutes);
 
 
 app.get("/",(req, res) => {
